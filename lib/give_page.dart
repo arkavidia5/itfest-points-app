@@ -9,12 +9,12 @@ class GivePage extends StatefulWidget {
 }
 
 class _GivePageState extends State<GivePage> with SingleTickerProviderStateMixin {
-  Animation<double> animation, opacityAnimation;
-  AnimationController controller;
+  //Animation<double> animation, opacityAnimation;
+  //AnimationController controller;
 
   initState() {
     super.initState();
-    controller = AnimationController(duration: const Duration(milliseconds: 900), vsync: this);
+    /*controller = AnimationController(duration: const Duration(milliseconds: 900), vsync: this);
 
     final Animation curve = CurvedAnimation(parent: controller, curve: Interval(5/9, 1.0, curve: Curves.easeOut));
     animation = Tween(begin: 40.0, end: 0.0).animate(curve)
@@ -31,7 +31,7 @@ class _GivePageState extends State<GivePage> with SingleTickerProviderStateMixin
         });
       });
 
-    controller.forward();
+    controller.forward();*/
   }
 
   @override
@@ -44,51 +44,45 @@ class _GivePageState extends State<GivePage> with SingleTickerProviderStateMixin
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Hero(
-                tag: 'title-give',
-                child: Material(
-                  color: Colors.transparent,
-                  clipBehavior: Clip.antiAlias,
-                  child: Text(
-                    "Give Points",
-                    style: TextStyle(fontSize: 28.0, color: Colors.white),
-                  ),
+              Material(
+                color: Colors.transparent,
+                clipBehavior: Clip.antiAlias,
+                child: Text(
+                  "Give Points",
+                  style: TextStyle(fontSize: 28.0, color: Colors.white),
                 ),
-              )
+              ),
             ],
           )
       ),
     );
 
-    final pointIndic = Opacity(
-      opacity: opacityAnimation.value,
-      child: Container(
-          width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.only(top: animation.value),
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Material(
-                elevation: 3,
-                borderRadius: BorderRadius.circular(4),
-                color: Colors.white,
-                shadowColor: Colors.black,
-                child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                            "Your remaining points:"
-                        ),
-                        Text(
-                          "2500",
-                          style: TextStyle(fontSize: 36.0, color: Colors.black),
-                        ),
-                      ],
-                    )
-                )
-            ),
-          )
-      ),
+    final pointIndic = Container(
+        width: MediaQuery.of(context).size.width,
+        //margin: EdgeInsets.only(top: animation.value),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Material(
+              elevation: 3,
+              borderRadius: BorderRadius.circular(4),
+              color: Colors.white,
+              shadowColor: Colors.black,
+              child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                          "Your remaining points:"
+                      ),
+                      Text(
+                        "2500",
+                        style: TextStyle(fontSize: 36.0, color: Colors.black),
+                      ),
+                    ],
+                  )
+              )
+          ),
+        )
     );
 
     final topupNominal = Padding(
@@ -126,10 +120,7 @@ class _GivePageState extends State<GivePage> with SingleTickerProviderStateMixin
           header,
           pointIndic,
           Expanded(
-              child: Opacity(
-                opacity: opacityAnimation.value,
-                child: topupNominal,
-              )
+              child: topupNominal
           )
         ]
       ),
@@ -138,15 +129,12 @@ class _GivePageState extends State<GivePage> with SingleTickerProviderStateMixin
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          Hero(
-            tag: 'give',
-            child: Material(
-              elevation: 0,
-              color: Colors.deepOrangeAccent,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-              ),
+          Material(
+            elevation: 0,
+            color: Colors.deepOrangeAccent,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
             ),
           ),
           body
@@ -157,7 +145,7 @@ class _GivePageState extends State<GivePage> with SingleTickerProviderStateMixin
   }
 
   dispose() {
-    controller.dispose();
+    //controller.dispose();
     super.dispose();
   }
 }

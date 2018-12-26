@@ -24,7 +24,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.lightBlue,
         fontFamily: 'Nunito',
       ),
-      home: LoginPage(),
+      home: Scaffold(
+        body: LoginPage()
+      ),
       routes: routes,
     );
   }

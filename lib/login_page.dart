@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:arkavidia_points/home_page.dart';
 import 'const.dart';
 import 'package:http/http.dart' as http;
-
+import 'dart:convert';
+import 'globals.dart' as globals;
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -12,17 +13,62 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  String email, password;
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
 
   bool isLoading = false;
 
-  void attemptLogin(String username, String password) async {
+  void attemptLogin(String username, String password, bool isAdmin) async {
     setState(() {
       isLoading = true;
     });
-    http.Response response = await http.get('https://jsonplaceholder.typicode.com/posts/1');
 
-    Navigator.of(context).pushReplacementNamed(HomePage.tag);
+    http.Response response = null;
+
+    var headers = {
+      'Content-type' : 'application/json',
+      'Accept': 'application/json',
+    };
+
+    if(isAdmin) {
+      String JSONbody = json.encode({
+        'username': username,
+        'password': password
+      });
+
+      response = await http.post(Constants.BASE_URL + '/admin/login', body: JSONbody, headers: headers);
+    } else {
+      String JSONbody = json.encode({
+        'name': username,
+        'password': password
+      });
+
+      response = await http.post(Constants.BASE_URL + '/tenant/login', body: JSONbody, headers: headers);
+    }
+
+    // Check response
+    if(response.body.contains("OK")) {
+      // All is well
+
+      // Retrieve authorization header
+      String authorization = response.headers['authorization'];
+      globals.isLoggedIn = true;
+      globals.authHeader = authorization;
+      globals.isAdmin = isAdmin;
+
+      Navigator.of(context).pushReplacementNamed(HomePage.tag);
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+
+      final snackBar = SnackBar(
+        content: Text('Invalid username and/or password.')
+      );
+
+      // Find the Scaffold in the Widget tree and use it to show a SnackBar!
+      Scaffold.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override
@@ -39,10 +85,9 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     final email = TextFormField(
+      controller: usernameController,
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
-      initialValue: '',
-      onSaved: (String value) { this.email = value; },
       decoration: InputDecoration(
         hintText: 'Username',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -51,10 +96,9 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     final password = TextFormField(
+      controller: passwordController,
       autofocus: false,
-      initialValue: '',
       obscureText: true,
-      onSaved: (String value) { this.password = value; },
       decoration: InputDecoration(
         hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -62,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    final loginButton = Padding(
+    final tenantLoginButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
       child: Material(
         borderRadius: BorderRadius.circular(30.0),
@@ -73,10 +117,29 @@ class _LoginPageState extends State<LoginPage> {
           minWidth: 200.0,
           height: 48.0,
           onPressed: () {
-            attemptLogin(this.email, this.password);
+            attemptLogin(usernameController.text, passwordController.text, false);
           },
           color: ArkavColors.ARKAV_ORANGE,
-          child: Text('Log In', style: TextStyle(color: Colors.white)),
+          child: Text('Sign in as Tenant', style: TextStyle(color: Colors.white)),
+        ),
+      ),
+    );
+
+    final adminLoginButton = Padding(
+      padding: EdgeInsets.symmetric(vertical: 16.0),
+      child: Material(
+        borderRadius: BorderRadius.circular(30.0),
+        shadowColor: Colors.lightBlue,
+        clipBehavior: Clip.antiAlias,
+        elevation: 5.0,
+        child: MaterialButton(
+          minWidth: 200.0,
+          height: 48.0,
+          onPressed: () {
+            attemptLogin(usernameController.text, passwordController.text, true);
+          },
+          color: Colors.lightBlue,
+          child: Text('Sign in as Admin', style: TextStyle(color: Colors.white)),
         ),
       ),
     );
@@ -95,7 +158,8 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 8.0),
             password,
             SizedBox(height: 24.0),
-            loginButton
+            tenantLoginButton,
+            adminLoginButton
           ],
         );
       }

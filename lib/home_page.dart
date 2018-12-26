@@ -46,22 +46,13 @@ class HomePage extends StatelessWidget {
     getMenuMaterialWidget(Color color, String heroTag, String menuName, String menuDescription) {
       return Padding(
             padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Stack(
-              children: <Widget>[
-                Hero(
-                  tag: heroTag,
-                  child: Material(
-                    elevation: 3,
-                    shadowColor: Colors.black,
-                    color: color,
-                    borderRadius: BorderRadius.circular(8),
-                    clipBehavior: Clip.antiAlias,
-                    child: Container(
-                      height: 150,
-                    ),
-                  ),
-                ),
-                Container(
+            child: Material(
+                elevation: 3,
+                shadowColor: Colors.black,
+                color: color,
+                borderRadius: BorderRadius.circular(8),
+                clipBehavior: Clip.antiAlias,
+                child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: 150,
                   child: Padding(
@@ -70,14 +61,11 @@ class HomePage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Hero(
-                            tag: 'title-' + heroTag,
-                            child: Material(
-                              color: Colors.transparent,
-                              child: Text(
-                                menuName,
-                                style: TextStyle(fontSize: 28.0, color: Colors.white),
-                              ),
+                          Material(
+                            color: Colors.transparent,
+                            child: Text(
+                              menuName,
+                              style: TextStyle(fontSize: 28.0, color: Colors.white),
                             ),
                           ),
                           Text(
@@ -88,8 +76,7 @@ class HomePage extends StatelessWidget {
                       )
                   ),
                 )
-              ],
-            )
+            ),
           );
     }
 
@@ -100,21 +87,7 @@ class HomePage extends StatelessWidget {
         children: <Widget>[
           GestureDetector(
             onTap: () {
-              Navigator.of(context).push(
-                PageRouteBuilder<Null>(
-                    pageBuilder: (BuildContext context, Animation<double> animation,
-                        Animation<double> secondaryAnimation) {
-                      return AnimatedBuilder(
-                          animation: animation,
-                          builder: (BuildContext context, Widget child) {
-                            return Opacity(
-                              opacity: animation.value,
-                              child: GivePage(),
-                            );
-                          });
-                    },
-                    transitionDuration: Duration(milliseconds: 500)),
-              );
+              Navigator.of(context).pushNamed(GivePage.tag);
             },
             child: getMenuMaterialWidget(Colors.deepOrangeAccent, 'give', 'Give Points', 'Give points to your visitors'),
           ),
