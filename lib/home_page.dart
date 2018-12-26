@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'const.dart';
 import 'give_page.dart';
+import 'globals.dart' as globals;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
   static String tag = 'home-page';
@@ -80,19 +82,30 @@ class HomePage extends StatelessWidget {
           );
     }
 
-    final listView = MediaQuery.removePadding(context: context,
-      removeTop: true,
-      child: ListView(
-        shrinkWrap: true,
-        children: <Widget>[
+    getAllowedMenu() {
+      bool isAdmin = globals.isAdmin;
+
+      if(isAdmin) {
+        return <Widget>[
+          getMenuMaterialWidget(Colors.lightBlue, 'redeem', 'Redeem Points', 'Exchange points for items'),
+        ];
+      } else {
+        return <Widget>[
           GestureDetector(
             onTap: () {
               Navigator.of(context).pushNamed(GivePage.tag);
             },
             child: getMenuMaterialWidget(Colors.deepOrangeAccent, 'give', 'Give Points', 'Give points to your visitors'),
-          ),
-          getMenuMaterialWidget(Colors.lightBlue, 'redeem', 'Redeem Points', 'Exchange points for items'),
-        ],
+          )
+        ];
+      }
+    }
+
+    final listView = MediaQuery.removePadding(context: context,
+      removeTop: true,
+      child: ListView(
+        shrinkWrap: true,
+        children: getAllowedMenu()
       ),
     );
 

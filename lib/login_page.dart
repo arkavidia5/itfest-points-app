@@ -4,6 +4,7 @@ import 'const.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'globals.dart' as globals;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -55,6 +56,21 @@ class _LoginPageState extends State<LoginPage> {
       globals.isLoggedIn = true;
       globals.authHeader = authorization;
       globals.isAdmin = isAdmin;
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool("isLoggedIn", true);
+      await prefs.setString("authHeader", authorization);
+      await prefs.setBool("isAdmin", isAdmin);
+      await prefs.setString("username", username);
+
+      // If tenant, retrieve info
+      if(!isAdmin) {
+        http.Response info = await http.get(Constants.BASE_URL + '/tenant/' + username);
+        var tenant = json.decode(info.body);
+        await prefs.setString("name", tenant['detail_name']);
+      } else {
+        await prefs.setString("name", 'Administrator');
+      }
 
       Navigator.of(context).pushReplacementNamed(HomePage.tag);
     } else {
