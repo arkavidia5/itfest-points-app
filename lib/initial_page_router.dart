@@ -19,7 +19,7 @@ class _InitialPageRouterState extends State<InitialPageRouter> {
       // Has not logged in, route to login page
       globals.isLoggedIn = false;
 
-      Navigator.of(context).pushNamed(LoginPage.tag);
+      Navigator.of(context).pushReplacementNamed(LoginPage.tag);
     } else {
       // Logged in, route to Home
       // Set globals
