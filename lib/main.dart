@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'login_page.dart';
 import 'give_page.dart';
+import 'initial_page_router.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,6 +11,7 @@ void main() {
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   final routes = <String, WidgetBuilder>{
+    '/': (context) => InitialPageRouter(),
     LoginPage.tag: (context) => LoginPage(),
     HomePage.tag: (context) => HomePage(),
     GivePage.tag: (context) => GivePage(),
@@ -24,10 +26,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.lightBlue,
         fontFamily: 'Nunito',
       ),
-      home: Scaffold(
-        body: LoginPage()
-      ),
       routes: routes,
+      initialRoute: '/',
     );
   }
 }

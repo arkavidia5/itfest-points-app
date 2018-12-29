@@ -13,6 +13,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
@@ -82,8 +83,7 @@ class _LoginPageState extends State<LoginPage> {
         content: Text('Invalid username and/or password.')
       );
 
-      // Find the Scaffold in the Widget tree and use it to show a SnackBar!
-      Scaffold.of(context).showSnackBar(snackBar);
+      _scaffoldKey.currentState.showSnackBar(snackBar);
     }
   }
 
@@ -183,6 +183,7 @@ class _LoginPageState extends State<LoginPage> {
 
     // Main view
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: ArkavColors.ARKAV_BROKEN_WHITE,
       body: Center(
         child: getBody()

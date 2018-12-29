@@ -12,6 +12,8 @@ class GivePage extends StatefulWidget {
 }
 
 class _GivePageState extends State<GivePage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   // States
   bool isLoadingPoints = true;
   int currentPoint = 0;
@@ -89,8 +91,7 @@ class _GivePageState extends State<GivePage> {
     );
 
     // TODO troubleshoot, it won't show
-    // Find the Scaffold in the Widget tree and use it to show a SnackBar!
-    Scaffold.of(context).showSnackBar(snackBar);
+    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override
@@ -214,6 +215,8 @@ class _GivePageState extends State<GivePage> {
     );
 
     return Scaffold(
+      backgroundColor: ArkavColors.ARKAV_BROKEN_WHITE,
+      key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           Material(
@@ -227,7 +230,6 @@ class _GivePageState extends State<GivePage> {
           body
         ],
       ),
-      backgroundColor: ArkavColors.ARKAV_BROKEN_WHITE,
     );
   }
 
