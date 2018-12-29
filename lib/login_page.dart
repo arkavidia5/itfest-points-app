@@ -80,8 +80,9 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       final snackBar = SnackBar(
-        content: Text('Invalid username and/or password.')
-      );
+        content: Text('Invalid username and/or password.'),
+        action: SnackBarAction(label: "OK", onPressed: null),
+    );
 
       _scaffoldKey.currentState.showSnackBar(snackBar);
     }

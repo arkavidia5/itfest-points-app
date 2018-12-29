@@ -83,15 +83,20 @@ class _GivePageState extends State<GivePage> {
         Constants.BASE_URL + '/transaction/point', headers: headers,
         body: JSONbody);
 
+    var data = json.decode(response.body);
+
     Navigator.of(context).pop();
-    _retrieveTenantPoints();
 
-    final snackBar = SnackBar(
-        content: Text(response.body)
-    );
+    if(data is Map) {
+      _retrieveTenantPoints();
+    } else {
+      var snackBar = SnackBar(
+        content: Text(data),
+        //action: SnackBarAction(label: "OK", onPressed: null),
+      );
 
-    // TODO troubleshoot, it won't show
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+    }
   }
 
   @override
