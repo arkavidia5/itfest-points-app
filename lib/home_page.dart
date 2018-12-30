@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'const.dart';
 import 'give_page.dart';
+import 'redeem_page.dart';
 import 'globals.dart' as globals;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -147,8 +148,12 @@ class _HomePageState extends State<HomePage> {
 
       if(isAdmin) {
         return <Widget>[
-          getMenuMaterialWidget(Colors.lightBlue, 'redeem', 'Redeem Points', 'Exchange points for items'),
-          getMenuMaterialWidget(Colors.green, 'redeem', 'Register Bracelet', 'Register new bracelet as user'),
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).pushNamed(RedeemPage.tag);
+            },
+            child: getMenuMaterialWidget(Colors.lightBlue, 'redeem', 'Redeem Points', 'Exchange points for items'),
+          )
         ];
       } else {
         return <Widget>[
