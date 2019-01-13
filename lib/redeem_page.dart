@@ -8,6 +8,8 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'package:numberpicker/numberpicker.dart';
 
+typedef void ConfirmationCallback(int quantity);
+
 class Item {
   String name, tenant, id;
   int price, stock, max_stock;
@@ -41,6 +43,98 @@ class _RedeemPageState extends State<RedeemPage> {
 
 
     return items;
+  }
+
+  /**
+   * Attempt to redeem
+   */
+  void _attemptRedeem(String barcode, String itemId, int qty) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      child: Dialog(
+          child: Padding(
+              padding: EdgeInsets.all(24),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: CircularProgressIndicator(),
+                  ),
+                  Text("Loading"),
+                ],
+              )
+          )
+      ),
+    );
+
+    // Attempt to deduce
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String authHeader = prefs.getString("authHeader");
+
+    var headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': authHeader
+    };
+
+    String JSONbody = json.encode({
+      'item_id': itemId,
+      'user_id': barcode,
+      'quantity': qty
+    });
+
+    http.Response response = await http.post(
+        Constants.BASE_URL + '/transaction/item', headers: headers,
+        body: JSONbody);
+
+    var data = json.decode(response.body);
+
+    // Pop, if possible
+    try {
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).pop();
+      }
+    } catch(e) {
+      debugPrint(e.toString());
+    }
+
+    if(data is Map) {
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        child: Dialog(
+            child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(child: Text("Transaction is successful!")),
+                  ],
+                )
+            )
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        child: Dialog(
+            child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: Text(data)
+                    )
+                  ],
+                )
+            )
+        ),
+      );
+    }
   }
 
   @override
@@ -205,7 +299,9 @@ class _RedeemPageState extends State<RedeemPage> {
   void _confirmPointTopup(String barcode, Item item) {
     showModalBottomSheet<void>(context: context,
         builder: (BuildContext context) {
-          return _ConfirmBottomSheet(item, barcode);
+          return _ConfirmBottomSheet(item, barcode, (int quantity) {
+            _attemptRedeem(barcode, item.id, quantity);
+          });
         });
   }
 }
@@ -213,102 +309,20 @@ class _RedeemPageState extends State<RedeemPage> {
 class _ConfirmBottomSheet extends StatefulWidget {
   final Item item;
   final String barcode;
+  final ConfirmationCallback callback;
 
-  _ConfirmBottomSheet(this.item, this.barcode);
+  _ConfirmBottomSheet(this.item, this.barcode, this.callback);
 
-  _ConfirmBottomSheetState createState() => _ConfirmBottomSheetState(this.item, this.barcode);
+  _ConfirmBottomSheetState createState() => _ConfirmBottomSheetState(this.item, this.barcode, this.callback);
 }
 
 class _ConfirmBottomSheetState extends State<_ConfirmBottomSheet> {
   Item item;
   String barcode;
+  ConfirmationCallback callback;
   int _redeemQty = 1;
 
-  _ConfirmBottomSheetState(this.item, this.barcode);
-
-  /**
-   * Attempt to redeem
-   */
-  void _attemptRedeem(String barcode, String itemId, int qty) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      child: Dialog(
-          child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 8),
-                    child: CircularProgressIndicator(),
-                  ),
-                  Text("Loading"),
-                ],
-              )
-          )
-      ),
-    );
-
-    // Attempt to deduce
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String authHeader = prefs.getString("authHeader");
-
-    var headers = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': authHeader
-    };
-
-    String JSONbody = json.encode({
-      'item_id': itemId,
-      'user_id': barcode,
-      'quantity': qty
-    });
-
-    http.Response response = await http.post(
-        Constants.BASE_URL + '/transaction/item', headers: headers,
-        body: JSONbody);
-    
-    var data = json.decode(response.body);
-
-    Navigator.of(context).pop();
-
-    if(data is Map) {
-      showDialog(
-        context: context,
-        barrierDismissible: true,
-        child: Dialog(
-            child: Padding(
-                padding: EdgeInsets.all(24),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("Transaction is successful!"),
-                  ],
-                )
-            )
-        ),
-      );
-    } else {
-      showDialog(
-        context: context,
-        barrierDismissible: true,
-        child: Dialog(
-            child: Padding(
-                padding: EdgeInsets.all(24),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(data),
-                  ],
-                )
-            )
-        ),
-      );
-    }
-  }
-
+  _ConfirmBottomSheetState(this.item, this.barcode, this.callback);
 
   @override
   Widget build(BuildContext context) {
@@ -380,8 +394,7 @@ class _ConfirmBottomSheetState extends State<_ConfirmBottomSheet> {
                         height: 56.0,
                         onPressed: () {
                           Navigator.of(context).pop();
-                          //TODO _attemptDeduction(barcode, point);
-                          _attemptRedeem(barcode, item.id, _redeemQty);
+                          callback(_redeemQty);
                         },
                         color: ArkavColors.ARKAV_ORANGE,
                         child: Text('Proceed', style: TextStyle(color: Colors.white, fontSize: 22)),

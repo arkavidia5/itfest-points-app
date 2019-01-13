@@ -23,6 +23,7 @@
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"
             android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <!-- This keeps the window background of the activity showing
                  until Flutter renders its first frame. It can be removed if
@@ -36,6 +37,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="com.apptreesoftware.barcodescan.BarcodeScannerActivity"/>
+        <activity android:name="com.apptreesoftware.barcodescan.BarcodeScannerActivity" android:screenOrientation="portrait"/>
     </application>
 </manifest>

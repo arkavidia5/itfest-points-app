@@ -7,8 +7,7 @@ import 'redeem_page.dart';
 import 'initial_page_router.dart';
 
 void main() {
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(new MyApp());
   });
 }
