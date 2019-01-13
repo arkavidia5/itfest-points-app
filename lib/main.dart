@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'home_page.dart';
 import 'login_page.dart';
 import 'give_page.dart';
@@ -6,7 +7,10 @@ import 'redeem_page.dart';
 import 'initial_page_router.dart';
 
 void main() {
-  runApp(MyApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(new MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {

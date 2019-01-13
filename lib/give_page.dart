@@ -307,7 +307,7 @@ class _GivePageState extends State<GivePage> {
                 Padding(
                     padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
                     child: Text(
-                      "You are going to transfer $point points to $barcode",
+                      "You are going to transfer $point points to $barcode.",
                       style: TextStyle(fontSize: 18.0, color: Colors.black),
                     )
                 ),
