@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
 
       final snackBar = SnackBar(
         content: Text('Invalid username and/or password.'),
-        action: SnackBarAction(label: "OK", onPressed: null),
+        action: SnackBarAction(label: "OK", onPressed: () {}),
     );
 
       _scaffoldKey.currentState.showSnackBar(snackBar);

@@ -6,5 +6,5 @@ class ArkavColors {
 }
 
 class Constants {
-  static const BASE_URL = 'http://54.179.163.148/test';
+  static const BASE_URL = 'https://itfest.arkavidia.id/api'; //'''http://54.179.163.148/test';
 }
