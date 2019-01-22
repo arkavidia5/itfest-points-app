@@ -32,7 +32,7 @@ class _RedeemPageState extends State<RedeemPage> {
 
   Future<List<Item>> _getItems() async {
     // TODO implement getItems
-    http.Response response = await http.get(Constants.BASE_URL + '/item');
+    http.Response response = await http.get(Constants.BASE_URL + '/item/all');
 
     List data = json.decode(response.body);
     List<Item> items = List();
