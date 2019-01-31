@@ -326,87 +326,108 @@ class _ConfirmBottomSheetState extends State<_ConfirmBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
-                child: Text(
-                  "Pick a quantity",
-                  style: TextStyle(fontSize: 28.0, color: Colors.black, fontWeight: FontWeight.bold),
-                )
-            ),
-            Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
-                child: Text(
-                  "You are going to redeem ${item.name} for ${barcode}.",
-                  style: TextStyle(fontSize: 18.0, color: Colors.black),
-                )
-            ),
-            Container(height: 10),
-            Material(
-              borderRadius: BorderRadius.circular(10),
-                clipBehavior: Clip.antiAlias,
-                child: Container(
-                color: Color.fromARGB(15, 0, 0, 0),
-                child:  GestureDetector(
-                  onTap: (){},
-                  child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      NumberPicker.integer(
-                        listViewWidth: MediaQuery.of(context).size.width - 32,
-                          initialValue: _redeemQty,
-                          minValue: 1,
-                          maxValue: item.stock,
-                          onChanged: (newValue) => setState(() => _redeemQty = newValue))
-                    ],
+    return GestureDetector(
+      onTap: () {},
+      child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
+                  child: Text(
+                    "Pick a quantity",
+                    style: TextStyle(fontSize: 28.0, color: Colors.black, fontWeight: FontWeight.bold),
+                  )
+              ),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
+                  child: Text(
+                    "You are going to redeem ${item.name} for ${barcode}.",
+                    style: TextStyle(fontSize: 18.0, color: Colors.black),
+                  )
+              ),
+              Container(height: 10),
+              Material(
+                  borderRadius: BorderRadius.circular(4),
+                  clipBehavior: Clip.antiAlias,
+                  child: Container(
+                    color: Color.fromARGB(15, 0, 0, 0),
+                    padding: EdgeInsets.all(8),
+                    child:  Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text("Qty: ${_redeemQty}", style: TextStyle(fontSize: 18),),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+                            child: GestureDetector(
+                              onTap: _showDialog,
+                              child: Text("(change)", style: TextStyle(fontSize: 18, color: Colors.blue)),
+                            ),
+                          )
+                        ]
+                    ),
+                  )
+              ),
+              Container(height: 20),
+              Text("Total: ${item.price * _redeemQty} points", style: TextStyle(fontSize: 18),),
+              Container(height: 20),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(4),
+                        child: MaterialButton(
+                          height: 48.0,
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          color: Colors.black12,
+                          child: Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 22)),
+                          elevation: 0,
+                        ),
+                      )
                   ),
-                ),
+                  Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(4),
+                        child: MaterialButton(
+                          height: 48.0,
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            callback(_redeemQty);
+                          },
+                          color: ArkavColors.ARKAV_ORANGE,
+                          child: Text('Proceed', style: TextStyle(color: Colors.white, fontSize: 22)),
+                          elevation: 0,
+                        ),
+                      )
+                  ),
+                ],
               )
-            ),
-            Container(height: 20),
-            Text("Total: ${item.price * _redeemQty} points", style: TextStyle(fontSize: 18),),
-            Container(height: 40),
-            Row(
-              children: <Widget>[
-                Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(4),
-                      child: MaterialButton(
-                        height: 56.0,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        color: Colors.black12,
-                        child: Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 22)),
-                        elevation: 0,
-                      ),
-                    )
-                ),
-                Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(4),
-                      child: MaterialButton(
-                        height: 56.0,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          callback(_redeemQty);
-                        },
-                        color: ArkavColors.ARKAV_ORANGE,
-                        child: Text('Proceed', style: TextStyle(color: Colors.white, fontSize: 22)),
-                        elevation: 0,
-                      ),
-                    )
-                ),
-              ],
-            )
 
-          ],
-        )
+            ],
+          )
+      )
     );
+  }
+
+  _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return NumberPickerDialog.integer(
+            initialIntegerValue: _redeemQty,
+            minValue: 1,
+            maxValue: item.stock,
+            title: Text("Pick a quantity"),
+        );
+      }
+    ).then((value) {
+      if (value != null) {
+        setState(() => _redeemQty = value);
+      }
+    });
   }
 }
